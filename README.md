@@ -1,4 +1,4 @@
-# Zoom OAuth Lab
+# Zoom OAuth Playground
 
 Security-focused local web app for testing Zoom OAuth flows side by side:
 
