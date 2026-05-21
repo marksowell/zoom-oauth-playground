@@ -1,0 +1,10 @@
+{
+  "name": "zoom-pkce-tester",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local Zoom OAuth test app for comparing confidential and PKCE authorization flows.",
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}

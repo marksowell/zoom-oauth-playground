@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zoom OAuth Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Zoom OAuth Playground</p>
+          <h1>OAuth Playground for PKCE and confidential flows.</h1>
+          <p class="hero-body">
+            Compare auth URLs, callbacks, and token exchanges in one place.
+          </p>
+          <div class="hero-pills">
+            <span>Local only</span>
+            <span>Callback inspector</span>
+            <span>PKCE generator</span>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="hero-panel-row">
+            <span>Authorize endpoint</span>
+            <strong>zoom.us/oauth/authorize</strong>
+          </div>
+          <div class="hero-panel-row">
+            <span>Token endpoint</span>
+            <strong>zoom.us/oauth/token</strong>
+          </div>
+          <div class="hero-panel-row">
+            <span>Redirect URI</span>
+            <strong id="redirect-uri-preview">http://localhost:3000/</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="intro-strip">
+          <div>
+            <p class="section-label">How to use it</p>
+            <p>
+              Put your Zoom app credentials in the matching panel, start authorization, then return
+              here after Zoom redirects back. The app will offer the right token exchange for that
+              callback.
+            </p>
+          </div>
+          <div>
+            <p class="section-label">Security note</p>
+            <p>
+              Confidential credentials are stored only in an ephemeral server-side session tied to
+              an <code>HttpOnly</code> cookie. The browser never writes your client secret into
+              local or session storage.
+            </p>
+          </div>
+        </section>
+
+        <section class="instruction-grid">
+          <article class="instruction-panel instruction-panel-wide">
+            <div class="column-header">
+              <p class="section-label">Setup and test plan</p>
+              <h2>Zoom Marketplace build and validation flow</h2>
+            </div>
+            <div class="instruction-columns">
+              <div>
+                <p class="panel-title">Marketplace setup</p>
+                <ol class="instruction-list">
+                  <li>Create a <strong>General App</strong> in the Zoom App Marketplace build flow.</li>
+                  <li>In <strong>App Credentials</strong>, copy the standard Client ID and Client Secret.</li>
+                  <li>Add <code>http://localhost:3000/</code> as a redirect URL in development.</li>
+                  <li>Add the scopes you want to test, such as <code>user:read</code>.</li>
+                  <li>Turn on <strong>Use Public Client OAuth</strong> to get a Public Client ID for PKCE.</li>
+                  <li>Use the <strong>Local Test</strong> page if you want Zoom’s build flow to add the app to your account before testing.</li>
+                </ol>
+              </div>
+              <div>
+                <p class="panel-title">Validation pass</p>
+                <ol class="instruction-list">
+                  <li>Run the confidential flow with the normal client ID and client secret.</li>
+                  <li>Run the PKCE flow with the Public Client ID and confirm the code exchange uses <code>code_verifier</code>.</li>
+                  <li>Compare returned scopes, token payloads, and any authorization prompts between both flows.</li>
+                  <li>Repeat after changing scopes or redirect URLs, since Zoom may ask you to re-authorize after those updates.</li>
+                </ol>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="flow-grid">
+          <article class="flow-column">
+            <div class="column-header">
+              <p class="section-label">Confidential</p>
+              <h2>Confidential OAuth</h2>
+            </div>
+            <form id="confidential-form" class="form-panel">
+              <label>
+                <span>Client ID</span>
+                <input name="clientId" autocomplete="off" placeholder="Zoom client ID" required />
+              </label>
+              <label>
+                <span>Client Secret</span>
+                <input
+                  name="clientSecret"
+                  type="password"
+                  autocomplete="off"
+                  placeholder="Zoom client secret"
+                  required
+                />
+              </label>
+              <label>
+                <span>Scopes</span>
+                <input name="scope" autocomplete="off" placeholder="user:read" />
+              </label>
+              <label>
+                <span>State label</span>
+                <input name="stateLabel" autocomplete="off" placeholder="team-debug" />
+              </label>
+              <button type="button" data-action="authorize-confidential">Start confidential flow</button>
+            </form>
+            <div class="panel-block">
+              <p class="panel-title">Authorize URL preview</p>
+              <pre id="confidential-authorize" class="code-block empty">Waiting for form values…</pre>
+            </div>
+          </article>
+
+          <article class="flow-column highlighted">
+            <div class="column-header">
+              <p class="section-label">Public</p>
+              <h2>OAuth with PKCE</h2>
+            </div>
+            <form id="pkce-form" class="form-panel">
+              <label>
+                <span>Public Client ID</span>
+                <input
+                  name="clientId"
+                  autocomplete="off"
+                  placeholder="Zoom public client ID"
+                  required
+                />
+              </label>
+              <label>
+                <span>Scopes</span>
+                <input name="scope" autocomplete="off" placeholder="user:read" />
+              </label>
+              <label>
+                <span>State label</span>
+                <input name="stateLabel" autocomplete="off" placeholder="mobile-sim" />
+              </label>
+              <div class="pkce-tools">
+                <button type="button" data-action="generate-pkce" class="secondary">
+                  Regenerate verifier
+                </button>
+                <div class="pkce-meta">
+                  <span>Method</span>
+                  <strong>S256</strong>
+                </div>
+              </div>
+              <button type="button" data-action="authorize-pkce">Start PKCE flow</button>
+            </form>
+            <div class="panel-block">
+              <p class="panel-title">PKCE material</p>
+              <pre id="pkce-material" class="code-block empty">Generating verifier…</pre>
+            </div>
+            <div class="panel-block">
+              <p class="panel-title">Authorize URL preview</p>
+              <pre id="pkce-authorize" class="code-block empty">Waiting for form values…</pre>
+            </div>
+          </article>
+        </section>
+
+        <section class="callback-grid">
+          <article class="callback-panel">
+            <div class="column-header">
+              <p class="section-label">Callback</p>
+              <h2>Returned query parameters</h2>
+            </div>
+            <pre id="callback-params" class="code-block empty">No callback data yet.</pre>
+          </article>
+
+          <article class="callback-panel">
+            <div class="column-header">
+              <p class="section-label">Exchange</p>
+              <h2>Token response</h2>
+            </div>
+            <div class="exchange-actions">
+              <button type="button" data-action="exchange-auto" class="secondary">
+                Exchange code for current callback
+              </button>
+              <button type="button" data-action="clear-session" class="ghost">Clear local session</button>
+            </div>
+            <pre id="token-response" class="code-block empty">No token request yet.</pre>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
