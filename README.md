@@ -5,6 +5,10 @@ Security-focused local web app for testing Zoom OAuth flows side by side:
 - Confidential OAuth with `client_id + client_secret`
 - PKCE OAuth with a Zoom public client ID
 
+## Screenshot
+
+![Zoom OAuth Playground](assets/zoom-oauth-playground.png)
+
 ## Run it
 
 ```bash
