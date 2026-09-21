@@ -1,2 +1,4 @@
 node_modules
 .DS_Store
+.codex/
+security_best_practices_report.md
