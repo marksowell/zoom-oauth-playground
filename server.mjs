@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const publicDir = join(__dirname, "public");
 const port = Number(process.env.PORT || 3000);
+const host = process.env.HOST || "127.0.0.1";
 const sessionCookieName = "zoom_oauth_lab_sid";
 const sessionTtlMs = 15 * 60 * 1000;
 const oauthAuthorizeEndpoint = "https://zoom.us/oauth/authorize";
@@ -370,6 +371,8 @@ const server = createServer(async (req, res) => {
   return serveStaticFile(req, res);
 });
 
-server.listen(port, () => {
-  console.log(`Zoom OAuth test app running at http://localhost:${port}`);
+server.listen(port, host, () => {
+  const address = server.address();
+  const displayHost = address.address.includes(":") ? `[${address.address}]` : address.address;
+  console.log(`Zoom OAuth test app running at http://${displayHost}:${address.port}`);
 });

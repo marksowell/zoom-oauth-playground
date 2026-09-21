@@ -17,6 +17,12 @@ npm start
 
 Then open [http://localhost:3000](http://localhost:3000).
 
+The server binds to `127.0.0.1` by default, so other machines cannot connect
+directly. Set `PORT` to change the port, for example `PORT=3002 npm start`.
+`HOST` can override the bind address when explicitly needed. Binding to
+`0.0.0.0` or `::` may expose the app directly to your network; keep the loopback
+default when using Teely's authenticated LAN sharing.
+
 ## Zoom Marketplace build flow setup
 
 Use the Zoom App Marketplace build flow to prepare both test paths:
